@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Подтверждение пожертвования</title>
+</head>
+<body>
+    <h2>Здравствуйте, {{ donor_username }}!</h2>
+    <p>Вы успешно сделали пожертвование <strong>{{ amount }} руб.</strong> 
+    для сбора <strong>"{{ collect_title }}"</strong>.</p>
+    
+    <div style="background-color: #e8f5e8; padding: 15px; border-radius: 5px; margin: 20px 0;">
+        <h3>Подтверждение пожертвования:</h3>
+        <p><strong>Сумма:</strong> {{ amount }} руб.</p>
+        <p><strong>Сбор:</strong> {{ collect_title }}</p>
+        <p><strong>Получатель:</strong> {{ author_username }}</p>
+        <p><strong>Дата:</strong> {{ payment_date }}</p>
+    </div>
+    
+    <p>С уважением,<br>Команда сервиса сборов</p>
+</body>
+</html>
