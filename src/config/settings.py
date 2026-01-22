@@ -97,7 +97,7 @@ REST_FRAMEWORK = {
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Сервис сборов API',
     'DESCRIPTION': 'API для работы с групповыми денежными сборами',
-    'VERSION': '1.0.0',
+    'VERSION': '0.0.1',
     'SERVE_INCLUDE_SCHEMA': False,
 }
 
