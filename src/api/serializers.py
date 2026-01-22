@@ -57,7 +57,10 @@ class CollectCreateSerializer(ModelSerializer):
 
 
 class CollectDetailSerializer(ModelSerializer):
-    """Обработка данных Группового сбора, влючает кол-во и сумму пожертвований."""
+    """
+    Обработка данных Группового сбора,
+    влючает количество и сумму пожертвований.
+    """
     payments = PaymentForCollectReadSerializer(
         many=True, read_only=True
     )

@@ -22,9 +22,11 @@ class PaymentAdmin(admin.ModelAdmin):
     )
 
     def current_price_display(self, obj):
+        """Вывод текущей суммы пожертвований."""
         return obj.payments.aggregate(
             total=Coalesce(Sum('amount'), 0)
         )['total']
 
     def donators_count_display(self, obj):
+        """Вывод количества пожертвователей."""
         return obj.payments.values('user').distinct().count()
