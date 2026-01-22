@@ -9,6 +9,7 @@ from .serializers import (
     PaymentCreateSerializer,
     RegistrationSerializer
 )
+from .email import send_collect_created_email, send_payment_created_email
 
 User = get_user_model()
 
@@ -46,7 +47,8 @@ class CollectViewSet(ModelViewSet):
         return CollectListSerializer
 
     def perform_create(self, serializer):
-        return serializer.save(author=self.request.user)
+        collect = serializer.save(author=self.request.user)
+        send_collect_created_email(collect)
 
 
 class PaymentViewSet(ModelViewSet):
@@ -59,4 +61,5 @@ class PaymentViewSet(ModelViewSet):
         return PaymentCreateSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        payment = serializer.save(user=self.request.user)
+        send_payment_created_email(payment)
