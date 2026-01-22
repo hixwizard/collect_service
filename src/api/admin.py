@@ -1,18 +1,30 @@
 from django.contrib import admin
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
+
 from .models import Payment, Collect
 
 
 @admin.register(Payment)
 class CollectAdmin(admin.ModelAdmin):
     """Панель управления Групповыми сборами."""
-    list_display = ('collect', 'user', 'amount', 'created_at', 'full_name',)
+    list_display = ('collect', 'user', 'amount', 'created_at',)
 
 
 @admin.register(Collect)
-class CollectAdmin(admin.ModelAdmin):
+class PaymentAdmin(admin.ModelAdmin):
     """Панель управления Групповыми сборами."""
     list_display = (
-        'author', 'title', 'reason', 'description',
-        'final_price', 'current_price', 'photo',
-        'donators_count', 'end_date',
+        'author', 'title', 'reason', 'final_price',
+        'current_price_display',
+        'donators_count_display',
+        'end_date',
     )
+
+    def current_price_display(self, obj):
+        return obj.payments.aggregate(
+            total=Coalesce(Sum('amount'), 0)
+        )['total']
+
+    def donators_count_display(self, obj):
+        return obj.payments.values('user').distinct().count()

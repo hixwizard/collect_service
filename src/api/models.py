@@ -34,16 +34,10 @@ class Collect(models.Model):
         null=False,
         verbose_name='Описание'
     )
-    final_price = models.BigIntegerField(
+    final_price = models.PositiveSmallIntegerField(
         null=False,
         blank=False,
         verbose_name='Сколько запланировано собрать'
-    )
-    current_price = models.IntegerField(
-        null=False,
-        blank=False,
-        default=0,
-        verbose_name='Сколько собрано на текущий момент'
     )
     photo = models.ImageField(
         upload_to='payment_photo',
@@ -51,8 +45,7 @@ class Collect(models.Model):
         null=True,
         verbose_name='Изображение'
     )
-    donators_count = models.PositiveSmallIntegerField(default=0)
-    end_date = models.DateTimeField()
+    end_date = models.DateTimeField(verbose_name='Дата окончания сбора')
 
     def __str__(self):
         return self.title
@@ -72,20 +65,15 @@ class Payment(models.Model):
     )
     user = models.ForeignKey(
         User, on_delete=CASCADE,
+        related_name='user_payments',
         verbose_name='Имя пользователя в системе'
     )
-    amount = models.PositiveIntegerField(
+    amount = models.PositiveSmallIntegerField(
         verbose_name='Сумма пожертвования'
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Дата создания'
-    )
-    full_name = models.CharField(
-        max_length=255,
-        blank=False,
-        null=False,
-        verbose_name='ФИО пользователя'
     )
 
     class Meta:
@@ -94,4 +82,4 @@ class Payment(models.Model):
         verbose_name_plural = 'Пожертвования'
 
     def __str__(self):
-        return f'{self.full_name} - {self.amount}'
+        return f'{self.user.username} - {self.amount}'
