@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import CASCADE
+from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 
 class Collect(models.Model):
@@ -50,6 +52,13 @@ class Collect(models.Model):
     def __str__(self):
         return self.title
 
+    def validatr_end_date(self):
+        """Валидация даты окончания сбора."""
+        if self.end_date < timezone.now():
+            raise ValidationError(
+                'Дата окончания сбора не может быть в прошлом'
+            )
+
     class Meta:
         ordering = ('-id',)
         verbose_name = 'Групповой сбор'
@@ -84,7 +93,22 @@ class Payment(models.Model):
         indexes = [
             models.Index(fields=['collect', 'created_at']),
             models.Index(fields=['user']),
+            models.Index(fields=['amount']),
         ]
+
+    def minimum_amount(self):
+        """Минимальная сумма пожертвования."""
+        if self.amount < 100:
+            raise ValidationError(
+                'Сумма пожертвования должна быть не менее 100 рублей'
+            )
+
+    def validate_collect_time(self):
+        """Валидация времени сбора."""
+        if self.collect.end_date < timezone.now():
+            raise ValidationError(
+                'Сбор уже завершен'
+            )
 
     def __str__(self):
         return f'{self.user.username} - {self.amount}'

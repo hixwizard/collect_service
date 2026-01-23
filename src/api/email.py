@@ -55,7 +55,7 @@ def send_collect_created_email(collect: Collect):
 
 
 def send_payment_created_email(payment: Payment):
-    """Отправка email автору сбора и донатеру о создании платежа."""
+    """Отправка email автору сбора и отправителю о создании платежа."""
     collect = payment.collect
     donor = payment.user
     connection = get_email_connection()

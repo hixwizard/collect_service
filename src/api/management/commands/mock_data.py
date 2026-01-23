@@ -11,26 +11,25 @@ from api.models import Collect, Payment
 
 
 class Command(BaseCommand):
-    help = 'Генерирует моковые данные для тестирования'
 
     def add_arguments(self, parser):
         parser.add_argument(
             '--users',
             type=int,
             default=1000,
-            help='Количество пользователей для генерации'
+            help='Количество пользователей'
         )
         parser.add_argument(
             '--collects',
             type=int,
             default=5000,
-            help='Количество сборов для генерации'
+            help='Количество сборов'
         )
         parser.add_argument(
             '--payments',
             type=int,
             default=20000,
-            help='Количество платежей для генерации'
+            help='Количество платежей'
         )
         parser.add_argument(
             '--batch-size',
@@ -39,8 +38,8 @@ class Command(BaseCommand):
             help='Размер батча для bulk_create'
         )
 
-    def handle(self, *args, **options):
-        self.stdout.write(self.style.SUCCESS('Начинаем генерацию моковых данных...'))
+    def handle(self, **options):
+        self.stdout.write(self.style.SUCCESS('Генерация моковых данных...'))
         try:
             users = self.create_users(options['users'])
             collects = self.create_collects(options['collects'], users)
@@ -60,7 +59,7 @@ class Command(BaseCommand):
         """Выводит прогресс-бар в консоль"""
         percent = int(100 * (current / float(total)))
         filled = int(length * current // total)
-        bar = '█' * filled + '-' * (length - filled)
+        bar = '*' * filled + '-' * (length - filled)
         sys.stdout.write(f'\r{prefix} |{bar}| {percent}% {suffix}')
         sys.stdout.flush()
         if current == total:
@@ -87,7 +86,7 @@ class Command(BaseCommand):
             self.stdout.write(f'Используем {existing_count} существующих пользователей')
             return list(User.objects.all()[:count])
         users_to_create = []
-        self.stdout.write('🔄 Генерируем пользователей...')
+        self.stdout.write('Генерируем пользователей...')
         for i in range(existing_count, count):
             if (i - existing_count + 1) % max(1, (count - existing_count) // 10) == 0:
                 self.print_progress(
@@ -230,6 +229,6 @@ class Command(BaseCommand):
             payments_created += len(payments_to_create)
             batch_number += 1
             if batch_number % 10 == 0:
-                self.stdout.write(f'\n📦 Обработано {payments_created}/{count} платежей')
+                self.stdout.write(f'\nОбработано {payments_created}/{count} платежей')
         self.stdout.write(self.style.SUCCESS(f'\nСоздано {payments_created} платежей'))
         self.stdout.write(self.style.SUCCESS('Поля current_price и donators_count вычисляются динамически'))

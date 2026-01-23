@@ -1,0 +1,53 @@
+services:
+  db:
+    image: postgres:14-alpine
+    container_name: postgres
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - '5432:5432'
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: always
+    volumes:
+      - redis_data:/data
+    ports:
+      - '6379:6379'
+
+  app:
+    build:
+      context: ../src
+    container_name: app
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - app_static:/app/static
+      - app_media:/app/media
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+      - redis
+    command: >
+      sh -c '
+        python manage.py migrate --noinput &&
+        python manage.py collectstatic --noinput &&
+        gunicorn config.wsgi:application \
+          --bind 0.0.0.0:8000 \
+          --timeout 300 \
+          --workers 10 \
+          --max-requests 200 \
+          --log-level debug
+      '
+
+volumes:
+  postgres_data:
+  redis_data:
+  app_static:
+  app_media:

@@ -16,8 +16,8 @@ class PaymentAdmin(admin.ModelAdmin):
 @admin.register(Collect)
 class CollectAdmin(admin.ModelAdmin):
     """Панель управления Групповыми сборами."""
-    list_display = ('id',
-        'author', 'title', 'reason', 'final_price',
+    list_display = (
+        'id', 'author', 'title', 'reason', 'final_price',
         'current_price_display',
         'donators_count_display',
         'end_date',
@@ -30,11 +30,12 @@ class CollectAdmin(admin.ModelAdmin):
         return obj.payments.aggregate(
             total=Coalesce(Sum('amount'), 0)
         )['total']
-    current_price_display.short_description = 'Собрано'
-    current_price_display.admin_order_field = 'current_price'
 
     def donators_count_display(self, obj):
         """Вывод количества пожертвователей."""
         return obj.payments.values('user').distinct().count()
+
     donators_count_display.short_description = 'Количество пожертвований'
     donators_count_display.admin_order_field = 'donators_count'
+    current_price_display.short_description = 'Собрано'
+    current_price_display.admin_order_field = 'current_price'

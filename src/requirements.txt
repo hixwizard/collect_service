@@ -8,3 +8,4 @@ redis
 django-redis
 gunicorn
 python-dotenv
+drf-extra-fields

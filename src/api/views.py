@@ -31,10 +31,12 @@ class CollectViewSet(ModelViewSet):
     http_method_names = ('post', 'get')
 
     def get_queryset(self):
-        """Фильтрация сборов."""
+        """Запрос к связным данным с вычислениями."""
         queryset = Collect.objects.select_related('author')
         if self.action == 'retrieve':
             queryset = queryset.prefetch_related('payments__user')
+        if self.action == 'list':
+            return Collect.objects.order_by('-id')
         return queryset.annotate(
             current_price=Coalesce(Sum('payments__amount'), 0),
             donators_count=Count('payments__user', distinct=True)
@@ -83,7 +85,7 @@ class PaymentViewSet(ModelViewSet):
     http_method_names = ('post',)
 
     def get_queryset(self):
-        """Фильтрация пожертвований."""
+        """Запрос к связным объектам."""
         return Payment.objects.select_related('collect', 'user')
 
     def get_serializer_class(self):
