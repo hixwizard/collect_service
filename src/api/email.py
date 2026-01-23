@@ -1,3 +1,7 @@
+from smtplib import (
+    SMTPException, SMTPRecipientsRefused, SMTPServerDisconnected
+)
+
 from django.core.mail import EmailMessage, get_connection
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -42,12 +46,16 @@ def send_collect_created_email(collect: Collect):
         )
         email.content_subtype = "html"
         email.send()
+    except (SMTPException, SMTPRecipientsRefused, SMTPServerDisconnected):
+        print(f'Ошибка отправки email: {SMTPException}')
+        print(f'Ошибка отправки email: {SMTPRecipientsRefused}')
+        print(f'Ошибка отправки email: {SMTPServerDisconnected}')
     finally:
         connection.close()
 
 
 def send_payment_created_email(payment: Payment):
-    """Отправка email автору сбора и донатеру о создании платежа."""
+    """Отправка email автору сбора и отправителю о создании платежа."""
     collect = payment.collect
     donor = payment.user
     connection = get_email_connection()
@@ -87,5 +95,9 @@ def send_payment_created_email(payment: Payment):
         )
         email.content_subtype = "html"
         email.send()
+    except (SMTPException, SMTPRecipientsRefused, SMTPServerDisconnected):
+        print(f'Ошибка отправки email: {SMTPException}')
+        print(f'Ошибка отправки email: {SMTPRecipientsRefused}')
+        print(f'Ошибка отправки email: {SMTPServerDisconnected}')
     finally:
         connection.close()
