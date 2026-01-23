@@ -34,7 +34,7 @@ class Collect(models.Model):
         null=False,
         verbose_name='Описание'
     )
-    final_price = models.PositiveSmallIntegerField(
+    final_price = models.PositiveIntegerField(
         null=False,
         blank=False,
         verbose_name='Сколько запланировано собрать'
@@ -69,7 +69,7 @@ class Payment(models.Model):
         related_name='user_payments',
         verbose_name='Имя пользователя в системе'
     )
-    amount = models.PositiveSmallIntegerField(
+    amount = models.PositiveIntegerField(
         verbose_name='Сумма пожертвования'
     )
     created_at = models.DateTimeField(
@@ -81,6 +81,10 @@ class Payment(models.Model):
         ordering = ('-created_at',)
         verbose_name = 'Пожертвование'
         verbose_name_plural = 'Пожертвования'
+        indexes = [
+            models.Index(fields=['collect', 'created_at']),
+            models.Index(fields=['user']),
+        ]
 
     def __str__(self):
         return f'{self.user.username} - {self.amount}'

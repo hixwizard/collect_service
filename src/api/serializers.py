@@ -16,6 +16,7 @@ class RegistrationSerializer(ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
+        """Создание пользователя."""
         password = validated_data.pop('password')
         user = User.objects.create(**validated_data)
         user.set_password(password)
@@ -52,8 +53,10 @@ class CollectCreateSerializer(ModelSerializer):
         model = Collect
         fields = (
             'title', 'reason', 'description',
-            'final_price', 'photo', 'end_date'
+            'final_price', 'photo', 'end_date',
+            'author'
         )
+        read_only_fields = ('author',)
 
 
 class CollectDetailSerializer(ModelSerializer):
