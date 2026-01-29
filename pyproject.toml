@@ -1,0 +1,26 @@
+[project]
+name = "collect_service"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "hixwizard",email = "stanislavbarinov0@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "Django",
+    "djangorestframework",
+    "drf-spectacular",
+    "Pillow",
+    "psycopg2-binary",
+    "redis",
+    "django-redis",
+    "gunicorn",
+    "python-dotenv",
+    "drf-extra-fields"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

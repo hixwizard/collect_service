@@ -3,7 +3,6 @@ djangorestframework
 drf-spectacular
 Pillow
 psycopg2-binary
-celery
 redis
 django-redis
 gunicorn

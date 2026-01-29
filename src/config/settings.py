@@ -70,6 +70,15 @@ if not DEBUG:
             'PORT': os.getenv('DB_PORT'),
         }
     }
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': os.getenv('REDIS_URL'),
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            }
+        }
+    }
 else:
     DATABASES = {
         'default': {
@@ -77,16 +86,6 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': os.getenv('REDIS_URL'),
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
-    }
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
