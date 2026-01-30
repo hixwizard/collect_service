@@ -1,9 +1,11 @@
 from smtplib import (
-    SMTPException, SMTPRecipientsRefused, SMTPServerDisconnected
+    SMTPException,
+    SMTPRecipientsRefused,
+    SMTPServerDisconnected,
 )
 
-from django.core.mail import EmailMessage, get_connection
 from django.conf import settings
+from django.core.mail import EmailMessage, get_connection
 from django.template.loader import render_to_string
 
 from .models import Collect, Payment

@@ -2,13 +2,14 @@ from django.contrib import admin
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
 
-from .models import Payment, Collect
+from .models import Collect, Payment
 
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
     """Панель управления Пожертвованиями."""
-    list_display = ('id', 'collect', 'user', 'amount', 'created_at',)
+
+    list_display = ('id', 'collect', 'user', 'amount', 'created_at')
     list_filter = ('created_at', 'collect')
     search_fields = ('user__username', 'collect__title')
 
@@ -16,6 +17,7 @@ class PaymentAdmin(admin.ModelAdmin):
 @admin.register(Collect)
 class CollectAdmin(admin.ModelAdmin):
     """Панель управления Групповыми сборами."""
+
     list_display = (
         'id', 'author', 'title', 'reason', 'final_price',
         'current_price_display',
@@ -28,7 +30,7 @@ class CollectAdmin(admin.ModelAdmin):
     def current_price_display(self, obj):
         """Вывод текущей суммы пожертвований."""
         return obj.payments.aggregate(
-            total=Coalesce(Sum('amount'), 0)
+            total=Coalesce(Sum('amount'), 0),
         )['total']
 
     def donators_count_display(self, obj):

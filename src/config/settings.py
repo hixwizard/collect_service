@@ -68,7 +68,7 @@ if not DEBUG:
             'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
             'HOST': os.getenv('DB_HOST'),
             'PORT': os.getenv('DB_PORT'),
-        }
+        },
     }
     CACHES = {
         'default': {
@@ -76,15 +76,15 @@ if not DEBUG:
             'LOCATION': os.getenv('REDIS_URL'),
             'OPTIONS': {
                 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            }
-        }
+            },
+        },
     }
 else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
-        }
+        },
     }
 
 AUTH_PASSWORD_VALIDATORS = [
