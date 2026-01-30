@@ -50,24 +50,24 @@ docker compose exec app python manage.py mock_data
 
 #### Локальные команды:
 ```bash
-python manage.py makemigrations
+poetry run python manage.py makemigrations api
 ```
 ```bash
-python manage.py migrate
+poetry run python manage.py migrate
 ```
 ```bash
-python manage.py runserver
+poetry run python manage.py runserver
 ```
 ```bash
-python manage.py ceratesuperuser
+poetry run python manage.py ceratesuperuser
 ```
 Создаст 26000 записей суммарно
 ```bash
-python manage.py mock_data
+poetry run python manage.py mock_data
 ```
 Доступны опции, ниже пример
 ```bash
-python manage.py mock_data --users 100 --collects 500 --payments 2000
+poetry run python manage.py mock_data --users 100 --collects 500 --payments 2000
 ```
 
 
