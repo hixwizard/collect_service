@@ -1,23 +1,26 @@
+from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.db.models import Count, Sum
-from django.contrib.auth import get_user_model
 from django.db.models.functions import Coalesce
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
+from .email import send_collect_created_email, send_payment_created_email
 from .models import Collect, Payment
 from .serializers import (
-    CollectCreateSerializer, CollectDetailSerializer, CollectListSerializer,
+    CollectCreateSerializer,
+    CollectDetailSerializer,
+    CollectListSerializer,
     PaymentCreateSerializer,
-    RegistrationSerializer
+    RegistrationSerializer,
 )
-from .email import send_collect_created_email, send_payment_created_email
 
 User = get_user_model()
 
 
 class UserViewSet(ModelViewSet):
     """Регистрация пользователей."""
+
     queryset = User.objects.all()
     http_method_names = ['post']
 
@@ -27,6 +30,7 @@ class UserViewSet(ModelViewSet):
 
 class CollectViewSet(ModelViewSet):
     """Создание сбора, список сборов, детальная информация о сборе."""
+
     queryset = Collect.objects.all()
     http_method_names = ('post', 'get')
 
@@ -39,7 +43,7 @@ class CollectViewSet(ModelViewSet):
             return Collect.objects.order_by('-id')
         return queryset.annotate(
             current_price=Coalesce(Sum('payments__amount'), 0),
-            donators_count=Count('payments__user', distinct=True)
+            donators_count=Count('payments__user', distinct=True),
         )
 
     def get_serializer_class(self):
@@ -49,7 +53,7 @@ class CollectViewSet(ModelViewSet):
             return CollectDetailSerializer
         return CollectListSerializer
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer) -> None:
         collect = serializer.save(author=self.request.user)
         send_collect_created_email(collect)
 
@@ -80,6 +84,7 @@ class CollectViewSet(ModelViewSet):
 
 class PaymentViewSet(ModelViewSet):
     """Создание пожертвования."""
+
     queryset = Payment.objects.select_related('collect', 'user')
     model = Payment
     http_method_names = ('post',)
