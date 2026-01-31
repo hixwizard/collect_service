@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -53,11 +55,34 @@ class Collect(models.Model):
     def __str__(self) -> str:
         return self.title
 
-    def validatr_end_date(self) -> None:
-        """Валидация даты окончания сбора."""
-        if self.end_date < timezone.now():
+    def clean(self) -> None:
+        """Валидация модели."""
+        super().clean()
+        now: datetime = timezone.now()
+        if self.end_date < now:
             raise ValidationError(
                 'Дата окончания сбора не может быть в прошлом',
+            )
+        if len(self.title) < 15:
+            raise ValidationError(
+                'Название сбора должно быть не менее 15 символов',
+            )
+        if len(self.description) > 10000:
+            raise ValidationError(
+                'Описание сбора должно быть не менее 10000 символов',
+            )
+        if self.final_price > 2147483647:
+            raise ValidationError(
+                'Сумма пожертвования должна быть не более 2147483647',
+            )
+        max_end_date: datetime = now + timezone.timedelta(days=365)
+        if self.end_date < now:
+            raise ValidationError(
+                'Дата окончания сбора должна быть не менее текущей даты',
+            )
+        if self.end_date > max_end_date:
+            raise ValidationError(
+                'Сбор может быть не более года',
             )
 
     class Meta:
@@ -88,6 +113,21 @@ class Payment(models.Model):
         verbose_name='Дата создания',
     )
 
+    def clean(self) -> None:
+        """Минимальная сумма пожертвования."""
+        super().clean()
+        if self.amount < 100:
+            raise ValidationError(
+                'Сумма пожертвования должна быть не менее 100 рублей',
+            )
+        if self.collect.end_date < timezone.now():
+            raise ValidationError(
+                'Сбор уже завершен',
+            )
+
+    def __str__(self) -> str:
+        return f'{self.user.username} - {self.amount}'
+
     class Meta:
         ordering = ('-created_at',)
         verbose_name = 'Пожертвование'
@@ -97,20 +137,3 @@ class Payment(models.Model):
             models.Index(fields=['user']),
             models.Index(fields=['amount']),
         ]
-
-    def minimum_amount(self) -> None:
-        """Минимальная сумма пожертвования."""
-        if self.amount < 100:
-            raise ValidationError(
-                'Сумма пожертвования должна быть не менее 100 рублей',
-            )
-
-    def validate_collect_time(self) -> None:
-        """Валидация времени сбора."""
-        if self.collect.end_date < timezone.now():
-            raise ValidationError(
-                'Сбор уже завершен',
-            )
-
-    def __str__(self) -> str:
-        return f'{self.user.username} - {self.amount}'

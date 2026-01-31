@@ -3,7 +3,7 @@ from django.urls import include, path
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.routers import SimpleRouter
 
-from .views import CollectViewSet, PaymentViewSet, UserViewSet
+from .apis import CollectViewSet, PaymentViewSet, UserViewSet
 
 router_v1 = SimpleRouter()
 router_v1.register('user', UserViewSet, basename='user')
