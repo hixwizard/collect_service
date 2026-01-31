@@ -97,3 +97,11 @@ poetry run ruff check --fix
 ```shell
 pre-commit install
 ```
+
+##### Тестирование
+
+Для тестирования используется пакет `pytest`
+
+```shell
+poetry run pytest
+```

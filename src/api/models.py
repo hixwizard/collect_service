@@ -10,6 +10,9 @@ from django.utils import timezone
 class Collect(models.Model):
     """Модель Группового денежного сбора."""
 
+    class Meta:
+        app_label = 'api'
+
     REASON_CHOICE = [
         ('birthday', 'День Рождения'),
         ('wedding', 'Свадьба'),
@@ -89,6 +92,7 @@ class Collect(models.Model):
         ordering = ('-id',)
         verbose_name = 'Групповой сбор'
         verbose_name_plural = 'Групповые сборы'
+        app_label = 'api'
 
 
 class Payment(models.Model):
@@ -137,3 +141,4 @@ class Payment(models.Model):
             models.Index(fields=['user']),
             models.Index(fields=['amount']),
         ]
+        app_label = 'api'
