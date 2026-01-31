@@ -1,5 +1,5 @@
-from tests.base import BaseTestCase
 from api.models import Payment
+from tests.base import BaseTestCase
 
 
 class PaymentModelTestCase(BaseTestCase):
@@ -10,7 +10,7 @@ class PaymentModelTestCase(BaseTestCase):
         payment = Payment.objects.create(
             collect=self.collect,
             user=self.other_user,
-            amount=2500
+            amount=2500,
         )
         self.assertIsInstance(payment, Payment)
         self.assertEqual(payment.amount, 2500)
@@ -20,7 +20,7 @@ class PaymentModelTestCase(BaseTestCase):
         payment = Payment.objects.create(
             collect=self.collect,
             user=self.other_user,
-            amount=3000
+            amount=3000,
         )
         expected_str = f'{self.other_user.username} - {3000}'
         self.assertEqual(str(payment), expected_str)
@@ -30,7 +30,7 @@ class PaymentModelTestCase(BaseTestCase):
         payment = Payment(
             collect=self.collect,
             user=self.other_user,
-            amount=50
+            amount=50,
         )
         with self.assertRaises(Exception):
             payment.full_clean()
@@ -40,7 +40,7 @@ class PaymentModelTestCase(BaseTestCase):
         payment = Payment(
             collect=self.past_collect,
             user=self.other_user,
-            amount=1000
+            amount=1000,
         )
         with self.assertRaises(Exception):
             payment.full_clean()

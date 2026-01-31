@@ -1,5 +1,5 @@
-from tests.base import BaseTestCase
 from api.models import Collect
+from tests.base import BaseTestCase
 
 
 class CollectModelTestCase(BaseTestCase):
@@ -13,12 +13,12 @@ class CollectModelTestCase(BaseTestCase):
             reason='wedding',
             description='Корректное описание для тестового сбора',
             final_price=25000,
-            end_date=self.future_date
+            end_date=self.future_date,
         )
         self.assertIsInstance(collect, Collect)
         self.assertEqual(
             collect.title,
-            'Корректное название для тестового сбора'
+            'Корректное название для тестового сбора',
         )
 
     def test_collect_string_representation(self):
@@ -29,7 +29,7 @@ class CollectModelTestCase(BaseTestCase):
             reason='birthday',
             description='Тестовое описание сбора',
             final_price=15000,
-            end_date=self.future_date
+            end_date=self.future_date,
         )
         self.assertEqual(str(collect), 'Тестовое название сбора')
 
@@ -41,7 +41,7 @@ class CollectModelTestCase(BaseTestCase):
             reason='other',
             description='Описание сбора',
             final_price=10000,
-            end_date=self.future_date
+            end_date=self.future_date,
         )
         with self.assertRaises(Exception):
             collect.full_clean()
@@ -54,7 +54,7 @@ class CollectModelTestCase(BaseTestCase):
             reason='birthday',
             description='Описание сбора для теста',
             final_price=10000,
-            end_date=self.past_date
+            end_date=self.past_date,
         )
         with self.assertRaises(Exception):
             collect.full_clean()

@@ -1,7 +1,7 @@
 from datetime import timedelta
 
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from django.utils import timezone
 from rest_framework.test import APIClient
 
@@ -20,12 +20,12 @@ class BaseTestCase(TestCase):
         cls.user = User.objects.create_user(
             username='testuser',
             email='test@example.com',
-            password='testpass123'
+            password='testpass123',
         )
         cls.other_user = User.objects.create_user(
             username='otheruser',
             email='other@example.com',
-            password='otherpass123'
+            password='otherpass123',
         )
         cls.future_date = timezone.now() + timedelta(days=30)
         cls.collect = Collect.objects.create(
@@ -34,7 +34,7 @@ class BaseTestCase(TestCase):
             reason='birthday',
             description='Описание тестового сбора для проверки функционала',
             final_price=10000,
-            end_date=cls.future_date
+            end_date=cls.future_date,
         )
         cls.past_date = timezone.now() - timedelta(days=1)
         cls.past_collect = Collect.objects.create(
@@ -43,7 +43,7 @@ class BaseTestCase(TestCase):
             reason='birthday',
             description='Описание завершенного сбора',
             final_price=50000,
-            end_date=cls.past_date
+            end_date=cls.past_date,
         )
 
     def setUp(self):

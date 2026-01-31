@@ -1,5 +1,5 @@
-from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from rest_framework import status
 
 from tests.base import BaseTestCase
@@ -23,7 +23,7 @@ class UserRegistrationTestCase(BaseTestCase):
             'first_name': 'New',
             'last_name': 'User',
             'email': 'new@example.com',
-            'password': 'newpass123'
+            'password': 'newpass123',
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

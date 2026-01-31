@@ -9,7 +9,7 @@ from django.utils import timezone
 
 class Collect(models.Model):
     """Модель Группового денежного сбора."""
-    
+
     class Meta:
         app_label = 'api'
 

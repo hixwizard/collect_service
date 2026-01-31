@@ -1,8 +1,8 @@
 from django.urls import reverse
 from rest_framework import status
 
-from tests.base import BaseTestCase
 from api.models import Payment
+from tests.base import BaseTestCase
 
 
 class PaymentViewSetTestCase(BaseTestCase):
@@ -17,7 +17,7 @@ class PaymentViewSetTestCase(BaseTestCase):
         url = reverse('payment-list')
         data = {
             'collect': self.collect.pk,
-            'amount': 5000
+            'amount': 5000,
         }
         self.client.force_authenticate(user=self.other_user)
         response = self.client.post(url, data, format='json')
@@ -29,13 +29,13 @@ class PaymentViewSetTestCase(BaseTestCase):
         url = reverse('payment-list')
         data = {
             'collect': self.collect.pk,
-            'amount': 50
+            'amount': 50,
         }
         self.client.force_authenticate(user=self.other_user)
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertTrue(
-            'Сумма пожертвования не менее 100 рублей' in str(response.data)
+            'Сумма пожертвования не менее 100 рублей' in str(response.data),
         )
 
     def test_create_payment_validation_error_author_cannot_donate(self):
@@ -43,7 +43,7 @@ class PaymentViewSetTestCase(BaseTestCase):
         url = reverse('payment-list')
         data = {
             'collect': self.collect.pk,
-            'amount': 1000
+            'amount': 1000,
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -53,7 +53,7 @@ class PaymentViewSetTestCase(BaseTestCase):
         url = reverse('payment-list')
         data = {
             'collect': self.past_collect.pk,
-            'amount': 1000
+            'amount': 1000,
         }
         self.client.force_authenticate(user=self.other_user)
         response = self.client.post(url, data, format='json')
