@@ -19,7 +19,7 @@ def cache_collect_list(page: int = 1, data=None):
 def cache_collect_detail(collect_id: int, data=None):
     """Кэширует детальную информацию о сборе."""
     return cache.set(
-        cache_key_for_collect_detail(collect_id), data, timeout=600
+        cache_key_for_collect_detail(collect_id), data, timeout=600,
     )
 
 

@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -77,7 +78,7 @@ class Collect(models.Model):
         max_end_date: datetime = now + timezone.timedelta(days=365)
         if self.end_date < now:
             raise ValidationError(
-                'Дата окончания сбора должна быть не менее текущей даты'
+                'Дата окончания сбора должна быть не менее текущей даты',
             )
         if self.end_date > max_end_date:
             raise ValidationError(

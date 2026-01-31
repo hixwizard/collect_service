@@ -1,9 +1,6 @@
-from django.core.cache import cache
-from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from .services import collect_create, payment_create
-from .selectors import collect_list, collect_detail, get_users, payment_list
+from .selectors import collect_detail, collect_list, get_users, payment_list
 from .serializers import (
     CollectCreateSerializer,
     CollectDetailSerializer,
@@ -11,6 +8,7 @@ from .serializers import (
     PaymentCreateSerializer,
     RegistrationSerializer,
 )
+from .services import collect_create, payment_create
 
 
 class UserViewSet(ModelViewSet):
@@ -20,6 +18,7 @@ class UserViewSet(ModelViewSet):
     http_method_names = ['post']
 
     def get_serializer_class(self):
+        """Выбор сериализатора."""
         return RegistrationSerializer
 
 
@@ -35,6 +34,7 @@ class CollectViewSet(ModelViewSet):
         return collect_list()
 
     def get_serializer_class(self):
+        """Выбор сериализатора."""
         if self.action == 'create':
             return CollectCreateSerializer
         if self.action == 'retrieve':
@@ -42,34 +42,15 @@ class CollectViewSet(ModelViewSet):
         return CollectListSerializer
 
     def get_object(self):
+        """Получение объекта."""
         return collect_detail(self.kwargs.get('pk'))
 
     def perform_create(self, serializer) -> None:
+        """Создание сбора."""
         collect_data = serializer.validated_data
         collect_data['author'] = self.request.user
         collect_create(collect_data)
         return collect_data
-
-    def list(self, request, *args, **kwargs):
-        """Кэшированный список сборов."""
-        cache_key = f'collect_list_page_{request.query_params.get("page", 1)}'
-        cached_data = cache.get(cache_key)
-        if cached_data is not None:
-            return Response(cached_data)
-        response = super().list(request, *args, **kwargs)
-        cache.set(cache_key, response.data, 600)
-        return response
-
-    def retrieve(self, request, *args, **kwargs):
-        """Кэшированная детальная информация о сборе."""
-        collect_id = kwargs['pk']
-        cache_key = f'collect_detail_{collect_id}'
-        cached_data = cache.get(cache_key)
-        if cached_data is not None:
-            return Response(cached_data)
-        response = super().retrieve(request, *args, **kwargs)
-        cache.set(cache_key, response.data, 600)
-        return response
 
 
 class PaymentViewSet(ModelViewSet):
@@ -82,9 +63,11 @@ class PaymentViewSet(ModelViewSet):
         return payment_list()
 
     def get_serializer_class(self):
+        """Выбор сериализатора."""
         return PaymentCreateSerializer
 
     def perform_create(self, serializer):
+        """Создание пожертвования."""
         payment_data = serializer.validated_data
         payment_data['user'] = self.request.user
         payment_create(payment_data)
