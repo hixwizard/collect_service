@@ -1,28 +1,27 @@
-[project]
+[tool.poetry]
 name = "collect_service"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "hixwizard",email = "stanislavbarinov0@gmail.com"}
-]
+authors = ["hixwizard <stanislavbarinov0@gmail.com>"]
 readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "Django",
-    "djangorestframework",
-    "drf-spectacular",
-    "Pillow",
-    "psycopg2-binary",
-    "redis",
-    "django-redis",
-    "gunicorn",
-    "python-dotenv",
-    "drf-extra-fields"
-]
 
+[tool.poetry.dependencies]
+python = ">=3.12"
+Django = "*"
+djangorestframework = "*"
+drf-spectacular = "*"
+Pillow = "*"
+psycopg2-binary = "*"
+redis = "*"
+django-redis = "*"
+gunicorn = "*"
+python-dotenv = "*"
+drf-extra-fields = "*"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.11.11"
+pytest = "^9.0.2"
+pytest-django = "^4.11.1"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
