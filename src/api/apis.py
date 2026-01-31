@@ -1,12 +1,9 @@
-from django.contrib.auth import get_user_model
 from django.core.cache import cache
-from django.db.models import Count, Sum
-from django.db.models.functions import Coalesce
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from .email import send_collect_created_email, send_payment_created_email
-from .models import Collect, Payment
+from .services import collect_create, payment_create
+from .selectors import collect_list, collect_detail, get_users, payment_list
 from .serializers import (
     CollectCreateSerializer,
     CollectDetailSerializer,
@@ -15,13 +12,11 @@ from .serializers import (
     RegistrationSerializer,
 )
 
-User = get_user_model()
-
 
 class UserViewSet(ModelViewSet):
     """Регистрация пользователей."""
 
-    queryset = User.objects.all()
+    queryset = get_users()
     http_method_names = ['post']
 
     def get_serializer_class(self):
@@ -31,20 +26,13 @@ class UserViewSet(ModelViewSet):
 class CollectViewSet(ModelViewSet):
     """Создание сбора, список сборов, детальная информация о сборе."""
 
-    queryset = Collect.objects.all()
     http_method_names = ('post', 'get')
 
     def get_queryset(self):
         """Запрос к связным данным с вычислениями."""
-        queryset = Collect.objects.select_related('author')
         if self.action == 'retrieve':
-            queryset = queryset.prefetch_related('payments__user')
-        if self.action == 'list':
-            return Collect.objects.order_by('-id')
-        return queryset.annotate(
-            current_price=Coalesce(Sum('payments__amount'), 0),
-            donators_count=Count('payments__user', distinct=True),
-        )
+            return collect_detail()
+        return collect_list()
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -53,12 +41,14 @@ class CollectViewSet(ModelViewSet):
             return CollectDetailSerializer
         return CollectListSerializer
 
-    def perform_create(self, serializer) -> None:
-        collect = serializer.save(author=self.request.user)
-        send_collect_created_email(collect)
+    def get_object(self):
+        return collect_detail(self.kwargs.get('pk'))
 
-        cache.delete_pattern('collect_list_*')
-        cache.delete_pattern('collect_detail_*')
+    def perform_create(self, serializer) -> None:
+        collect_data = serializer.validated_data
+        collect_data['author'] = self.request.user
+        collect_create(collect_data)
+        return collect_data
 
     def list(self, request, *args, **kwargs):
         """Кэшированный список сборов."""
@@ -85,17 +75,17 @@ class CollectViewSet(ModelViewSet):
 class PaymentViewSet(ModelViewSet):
     """Создание пожертвования."""
 
-    queryset = Payment.objects.select_related('collect', 'user')
-    model = Payment
     http_method_names = ('post',)
 
     def get_queryset(self):
         """Запрос к связным объектам."""
-        return Payment.objects.select_related('collect', 'user')
+        return payment_list()
 
     def get_serializer_class(self):
         return PaymentCreateSerializer
 
     def perform_create(self, serializer):
-        payment = serializer.save(user=self.request.user)
-        send_payment_created_email(payment)
+        payment_data = serializer.validated_data
+        payment_data['user'] = self.request.user
+        payment_create(payment_data)
+        return payment_data
