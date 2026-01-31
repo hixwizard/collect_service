@@ -8,7 +8,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     ports:
-      - '5432:5432'
+      - '${DB_PORT}:${DB_PORT}'
 
   redis:
     image: redis:7-alpine
@@ -17,12 +17,12 @@ services:
     volumes:
       - redis_data:/data
     ports:
-      - '6379:6379'
+      - '${REDIS_PORT}:${REDIS_PORT}'
 
   app:
     build:
       context: ../src
-    container_name: app
+    container_name: collect_service_backend
     restart: always
     env_file:
       - .env
@@ -30,7 +30,7 @@ services:
       - app_static:/app/static
       - app_media:/app/media
     ports:
-      - '8000:8000'
+      - '${APP_PORT}:${APP_PORT}'
     depends_on:
       - db
       - redis
@@ -39,7 +39,7 @@ services:
         python manage.py migrate --noinput &&
         python manage.py collectstatic --noinput &&
         gunicorn config.wsgi:application \
-          --bind 0.0.0.0:8000 \
+          --bind 0.0.0.0:${APP_PORT} \
           --timeout 300 \
           --workers 10 \
           --max-requests 200 \

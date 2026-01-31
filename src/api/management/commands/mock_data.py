@@ -26,6 +26,8 @@ class Command(BaseCommand):
             user = User(
                 username=f'пользователь {i}',
                 email=f'test_user{i}@test.com',
+                first_name=f'Имя {i}',
+                last_name=f'Фамилия {i}',
             )
             user.set_password('1')
             users.append(user)
