@@ -27,9 +27,9 @@ def collect_list():
     return data
 
 
-def collect_detail(collect_id):
+def collect_detail(id):  # noqa: A002
     """Получение детальной информации о сборе."""
-    cache_data = cache_collect_detail(collect_id)
+    cache_data = cache_collect_detail(id)
     if cache_data is not None:
         return cache_data
     try:
@@ -47,11 +47,3 @@ def collect_detail(collect_id):
 def payment_list():
     """Получение списка пожертвований для сбора."""
     return Payment.objects.select_related('user').order_by('-created_at')
-
-
-def collect_get(collect_id):
-    """Получение сбора по ID."""
-    try:
-        return Collect.objects.get(id=collect_id)
-    except Collect.DoesNotExist:
-        raise Http404('Сбор не найден')
